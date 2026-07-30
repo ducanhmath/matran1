@@ -1,1 +1,466 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bài học Ma trận: phép toán ma trận, nhân ma trận, ma trận nghịch đảo, giải hệ phương trình và bài tập tự chấm.">
+  <meta name="author" content="Giảng viên Nguyễn Đức Ánh">
+  <meta name="theme-color" content="#176b63">
+  <title>Ma trận và ma trận nghịch đảo | Nguyễn Đức Ánh</title>
 
+  <!-- Cấu hình MathJax phải đặt trước tệp tải MathJax -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]],
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+        processEscapes: true
+      },
+      svg: { fontCache: "global" },
+      options: {
+        skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root{
+      --bg:#f2f7f6;--bg2:#edf3fa;--surface:#fff;--soft:#f8fbfb;
+      --primary:#176b63;--primary2:#0f514b;--primary-soft:#ddf2ee;
+      --secondary:#426fad;--secondary-soft:#e8f0fb;
+      --accent:#d9783d;--accent-soft:#fff0e6;
+      --danger:#bd4b59;--danger-soft:#fdecef;
+      --success:#20805a;--success-soft:#e5f6ee;
+      --text:#223238;--muted:#5c7077;--border:#d5e3e1;
+      --shadow:0 14px 36px rgba(34,74,78,.12);
+      --radius:22px;--max:1160px;--top:66px;--toc:56px;--base:16px
+    }
+    body.large-text{--base:18px}
+    body.high-contrast{--bg:#fff;--bg2:#f5f5f5;--text:#111;--muted:#333;--border:#8b9896;--primary:#005b52;--secondary:#164b92}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:calc(var(--top) + var(--toc) + 20px)}
+    body{
+      margin:0;font-family:Inter,Arial,sans-serif;font-size:var(--base);line-height:1.7;color:var(--text);
+      background:radial-gradient(circle at 8% 0,rgba(35,136,122,.12),transparent 28%),
+                 radial-gradient(circle at 94% 5%,rgba(66,111,173,.11),transparent 28%),
+                 linear-gradient(145deg,var(--bg),var(--bg2))
+    }
+    button,input{font:inherit}button{border:0}a{color:inherit}
+    .topbar{position:sticky;top:0;z-index:1000;min-height:var(--top);background:rgba(250,253,252,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(14px)}
+    .topbar-inner,.toc-inner,.page{width:min(calc(100% - 28px),var(--max));margin:auto}
+    .topbar-inner{min-height:var(--top);display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0}
+    .logo{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;color:#fff;font-weight:900;background:linear-gradient(145deg,var(--primary),var(--secondary))}
+    .brand strong,.brand span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand span{font-size:.76rem;color:var(--muted)}
+    .actions{display:flex;gap:8px}.icon-btn{width:41px;height:41px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer;color:var(--muted)}
+    .toc{position:sticky;top:var(--top);z-index:900;background:rgba(255,255,255,.9);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+    .toc-inner{min-height:var(--toc);display:flex;gap:8px;align-items:center;overflow-x:auto;padding:8px 0}
+    .toc-link{flex:0 0 auto;padding:8px 12px;border-radius:999px;text-decoration:none;font-size:.82rem;font-weight:750;color:var(--muted)}
+    .toc-link.active,.toc-link:hover{background:var(--primary-soft);color:var(--primary2)}
+    .progress{height:4px;background:#dfe9e7}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--secondary))}
+    .page{margin-top:26px;margin-bottom:48px}
+    .hero{padding:clamp(28px,5vw,56px);display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:center;color:#fff;border-radius:28px;background:linear-gradient(135deg,#12584f,#237a70 48%,#426fad);box-shadow:var(--shadow)}
+    .hero h1{margin:0;font-size:clamp(2.1rem,5vw,4.1rem);line-height:1.05}.hero p{color:rgba(255,255,255,.86)}
+    .chips,.hero-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}.chip{padding:7px 11px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.09);font-size:.8rem;font-weight:750}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:45px;padding:10px 17px;border-radius:13px;text-decoration:none;font-weight:850;cursor:pointer}.btn-light{background:#fff;color:var(--primary2)}.btn-ghost{border:1px solid rgba(255,255,255,.3)}
+    .hero-map{display:grid;gap:11px}.map-card{padding:14px 16px;border:1px solid rgba(255,255,255,.22);border-radius:17px;background:rgba(255,255,255,.1)}.map-card strong{display:block}.map-card span{font-size:.82rem;color:rgba(255,255,255,.75)}
+    .section{margin-top:27px;padding:clamp(22px,4vw,38px);border:1px solid var(--border);border-radius:var(--radius);background:rgba(255,255,255,.96);box-shadow:0 8px 22px rgba(35,75,80,.07)}
+    .section-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:22px}.index{width:48px;height:48px;flex:0 0 auto;display:grid;place-items:center;border-radius:14px;color:#fff;font-weight:900;background:linear-gradient(145deg,var(--primary),var(--secondary))}
+    .kicker{font-size:.75rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:var(--primary)}h2{margin:2px 0;font-size:clamp(1.45rem,3vw,2rem)}.lead{margin:6px 0;color:var(--muted)}
+    .grid2,.grid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .card,.example{padding:19px;border:1px solid var(--border);border-radius:17px;background:linear-gradient(145deg,#fff,var(--soft))}.card h3,.example h3{margin-top:0;color:var(--primary2)}
+    .formula{margin:14px 0;padding:15px;overflow-x:auto;text-align:center;border:1px solid var(--border);border-radius:13px;background:var(--primary-soft)}.formula.blue{background:var(--secondary-soft)}.formula.orange{background:var(--accent-soft)}
+    .note,.warning{margin:18px 0;padding:16px 18px;border-radius:15px;background:var(--success-soft);border-left:5px solid var(--success)}.warning{background:#fff6de;border-left-color:#b87918}
+    .steps{list-style:none;padding:0;display:grid;gap:11px}.steps li{display:grid;grid-template-columns:34px 1fr;gap:11px;padding:14px;border:1px solid var(--border);border-radius:13px;background:#fff}.steps b:first-child{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:var(--primary);color:#fff}
+    .solution-btn{margin-top:10px;padding:9px 13px;border-radius:10px;background:var(--primary-soft);color:var(--primary2);font-weight:850;cursor:pointer;border:1px solid #bdd7d2}.solution{display:none;margin-top:13px;padding:15px;border-left:4px solid var(--primary);background:#fff;border-radius:0 12px 12px 0}.solution.open{display:block}
+    .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:15px}.table{width:100%;min-width:700px;border-collapse:collapse;background:#fff}.table th,.table td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left}.table th{background:var(--primary-soft);color:var(--primary2)}
+    .quiz-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin:15px 0}.filters{display:flex;flex-wrap:wrap;gap:8px}.filter{padding:8px 11px;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}.filter.active{background:var(--primary-soft);color:var(--primary2)}
+    .questions{display:grid;gap:14px}.question{padding:18px;border:1px solid var(--border);border-radius:16px;background:#fff}.question.correct{background:var(--success-soft);border-color:#8bc9ae}.question.incorrect{background:var(--danger-soft);border-color:#e2a1aa}
+    .qtop{display:flex;justify-content:space-between;gap:10px}.topic{font-size:.72rem;font-weight:850;padding:4px 8px;border-radius:999px;background:var(--secondary-soft);color:var(--secondary)}
+    .options{display:grid;gap:8px}.option{display:grid;grid-template-columns:auto 1fr;gap:9px;padding:10px 12px;border:1px solid var(--border);border-radius:11px;background:var(--soft);cursor:pointer}.feedback{display:none;margin-top:12px;padding:12px;border-radius:11px;background:rgba(255,255,255,.8)}.feedback.show{display:block}
+    .quiz-actions{margin-top:18px;display:flex;flex-wrap:wrap;justify-content:center;gap:9px}.action{padding:10px 15px;border-radius:12px;font-weight:850;cursor:pointer}.submit{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}.reset{background:var(--danger-soft);color:var(--danger)}.shuffle{background:var(--secondary-soft);color:var(--secondary)}
+    .result{display:none;margin-top:20px;padding:24px;text-align:center;border-radius:18px;background:linear-gradient(145deg,#fff,var(--primary-soft));border:1px solid var(--border)}.result.show{display:block}.score{font-size:2rem;font-weight:900;color:var(--primary2)}
+    .footer{margin-top:27px;padding:25px;text-align:center;border:1px solid var(--border);border-radius:20px;background:#fff;color:var(--muted)}
+    .top{position:fixed;right:18px;bottom:18px;width:45px;height:45px;border-radius:14px;background:linear-gradient(145deg,var(--primary),var(--secondary));color:#fff;cursor:pointer;opacity:0;visibility:hidden}.top.show{opacity:1;visibility:visible}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
+    @media(max-width:720px){.grid2{grid-template-columns:1fr}.brand span{display:none}.hero{padding:28px 20px;border-radius:21px}.section{padding:21px 17px}.hero-map{display:none}}
+    @media(max-width:480px){.topbar-inner,.toc-inner,.page{width:min(calc(100% - 18px),var(--max))}.brand strong{max-width:155px;font-size:.84rem}.icon-btn{width:38px;height:38px}}
+    @media print{.topbar,.toc,.solution-btn,.quiz-actions,.top{display:none!important}.solution{display:block}.hero{background:#fff;color:#000;border:2px solid #aaa}.hero p,.chip{color:#000}.page{width:100%;margin:0}.section,.hero{box-shadow:none}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#trang-chu">
+        <div class="logo">A</div>
+        <div><strong>Ma trận và ma trận nghịch đảo</strong><span>Dạng toán và cách giải · Nguyễn Đức Ánh</span></div>
+      </a>
+      <div class="actions">
+        <button class="icon-btn" id="fontBtn" title="Đổi cỡ chữ" aria-label="Đổi cỡ chữ">A±</button>
+        <button class="icon-btn" id="contrastBtn" title="Tương phản cao" aria-label="Tương phản cao">◐</button>
+        <button class="icon-btn" onclick="window.print()" title="In bài học" aria-label="In bài học">⎙</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Mục lục">
+    <div class="toc-inner">
+      <a class="toc-link active" href="#trang-chu">00 Giới thiệu</a>
+      <a class="toc-link" href="#nhan-dang">01 Nhận dạng</a>
+      <a class="toc-link" href="#phep-toan">02 Phép toán</a>
+      <a class="toc-link" href="#nhan-ma-tran">03 Nhân ma trận</a>
+      <a class="toc-link" href="#nghich-dao">04 Nghịch đảo</a>
+      <a class="toc-link" href="#gauss-jordan">05 Gauss–Jordan</a>
+      <a class="toc-link" href="#ung-dung">06 Ứng dụng</a>
+      <a class="toc-link" href="#luyen-tap">07 Luyện tập</a>
+    </div>
+    <div class="progress"><div id="progressFill"></div></div>
+  </nav>
+
+  <main class="page">
+    <section class="hero" id="trang-chu">
+      <div>
+        <span class="chip">Đại số tuyến tính · Học theo dạng toán</span>
+        <h1>Ma trận và ma trận nghịch đảo</h1>
+        <p>Bài học tập trung vào kỹ năng tính toán: cộng, trừ, nhân với số, nhân hai ma trận, tìm ma trận nghịch đảo và dùng ma trận để giải hệ phương trình tuyến tính.</p>
+        <div class="chips">
+          <span class="chip">Ít lý thuyết</span><span class="chip">Nhiều ví dụ</span><span class="chip">Quy trình rõ ràng</span><span class="chip">Quiz tự chấm</span>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-light" href="#nhan-dang">Bắt đầu học →</a>
+          <a class="btn btn-ghost" href="#luyen-tap">Làm bài luyện tập</a>
+        </div>
+      </div>
+      <div class="hero-map">
+        <div class="map-card"><strong>1. Kiểm tra kích thước</strong><span>Xác định phép toán có thực hiện được hay không.</span></div>
+        <div class="map-card"><strong>2. Tính đúng quy tắc</strong><span>Cộng theo vị trí, nhân theo hàng × cột.</span></div>
+        <div class="map-card"><strong>3. Kiểm tra khả nghịch</strong><span>Ma trận vuông và định thức khác 0.</span></div>
+        <div class="map-card"><strong>4. Ứng dụng</strong><span>Giải phương trình ma trận và hệ tuyến tính.</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="nhan-dang">
+      <div class="section-head"><div class="index">01</div><div><div class="kicker">Chiến lược chung</div><h2>Nhận dạng dạng toán trước khi tính</h2><p class="lead">Đừng thực hiện phép tính ngay. Hãy kiểm tra cấp của ma trận và điều kiện của phép toán.</p></div></div>
+      <div class="grid3">
+        <article class="card"><h3>Cộng hoặc trừ</h3><p>Hai ma trận phải cùng cấp.</p><div class="formula">\(A_{m\times n}\pm B_{m\times n}\)</div></article>
+        <article class="card"><h3>Nhân hai ma trận</h3><p>Số cột của ma trận thứ nhất bằng số hàng của ma trận thứ hai.</p><div class="formula">\(A_{m\times n}B_{n\times p}=C_{m\times p}\)</div></article>
+        <article class="card"><h3>Tìm nghịch đảo</h3><p>Ma trận phải vuông và có định thức khác 0.</p><div class="formula">\(\det A\ne0\)</div></article>
+      </div>
+      <div class="warning"><strong>Lỗi thường gặp:</strong> thấy hai ma trận là nhân ngay mà không kiểm tra kích thước; nhầm \(AB=BA\); quên điều kiện \(\det A\ne0\).</div>
+    </section>
+
+    <section class="section" id="phep-toan">
+      <div class="section-head"><div class="index">02</div><div><div class="kicker">Dạng toán 1</div><h2>Cộng, trừ và nhân ma trận với một số</h2><p class="lead">Thực hiện theo từng phần tử cùng vị trí.</p></div></div>
+      <div class="formula">\[
+      A+B=(a_{ij}+b_{ij}),\qquad A-B=(a_{ij}-b_{ij}),\qquad kA=(ka_{ij}).
+      \]</div>
+      <article class="example">
+        <h3>Ví dụ 1 · Phép toán cơ bản</h3>
+        <p>Cho \(A=\begin{pmatrix}1&-2\\3&4\end{pmatrix}\), \(B=\begin{pmatrix}2&1\\-1&5\end{pmatrix}\). Tính \(2A-B\).</p>
+        <button class="solution-btn" data-target="sol1" aria-expanded="false">Xem lời giải</button>
+        <div class="solution" id="sol1">\[
+          2A-B=
+          \begin{pmatrix}2&-4\\6&8\end{pmatrix}
+          -
+          \begin{pmatrix}2&1\\-1&5\end{pmatrix}
+          =
+          \boxed{\begin{pmatrix}0&-5\\7&3\end{pmatrix}}.
+        \]</div>
+      </article>
+      <div class="note"><strong>Mẹo kiểm tra:</strong> kết quả của phép cộng, trừ và nhân với số luôn có cùng cấp với ma trận ban đầu.</div>
+    </section>
+
+    <section class="section" id="nhan-ma-tran">
+      <div class="section-head"><div class="index">03</div><div><div class="kicker">Dạng toán 2</div><h2>Nhân hai ma trận</h2><p class="lead">Mỗi phần tử của tích được tạo bởi một hàng của ma trận thứ nhất nhân vô hướng với một cột của ma trận thứ hai.</p></div></div>
+      <div class="formula blue">\[
+        c_{ij}=\sum_{k=1}^{n}a_{ik}b_{kj}.
+      \]</div>
+      <ol class="steps">
+        <li><b>1</b><div><strong>Kiểm tra điều kiện.</strong><br>Nếu \(A\) có \(n\) cột thì \(B\) phải có \(n\) hàng.</div></li>
+        <li><b>2</b><div><strong>Xác định cấp kết quả.</strong><br>Giữ số hàng của \(A\), giữ số cột của \(B\).</div></li>
+        <li><b>3</b><div><strong>Nhân hàng với cột.</strong><br>Tính lần lượt từng phần tử \(c_{ij}\).</div></li>
+      </ol>
+      <article class="example">
+        <h3>Ví dụ 2 · Nhân hàng với cột</h3>
+        <p>Cho \(A=\begin{pmatrix}1&2&-1\\0&3&2\end{pmatrix}\), \(B=\begin{pmatrix}2&1\\-1&0\\3&2\end{pmatrix}\). Tính \(AB\).</p>
+        <button class="solution-btn" data-target="sol2" aria-expanded="false">Xem lời giải</button>
+        <div class="solution" id="sol2">\[
+        AB=
+        \begin{pmatrix}
+        1\cdot2+2(-1)+(-1)3 & 1\cdot1+2\cdot0+(-1)2\\
+        0\cdot2+3(-1)+2\cdot3 & 0\cdot1+3\cdot0+2\cdot2
+        \end{pmatrix}
+        =
+        \boxed{\begin{pmatrix}-3&-1\\3&4\end{pmatrix}}.
+        \]</div>
+      </article>
+      <div class="warning"><strong>Chú ý:</strong> nói chung \(AB\ne BA\). Thậm chí \(AB\) tồn tại nhưng \(BA\) có thể không tồn tại.</div>
+    </section>
+
+    <section class="section" id="nghich-dao">
+      <div class="section-head"><div class="index">04</div><div><div class="kicker">Dạng toán 3</div><h2>Ma trận nghịch đảo cấp 2</h2><p class="lead">Đây là cách nhanh nhất cho ma trận vuông cấp 2.</p></div></div>
+      <div class="formula orange">\[
+      A=\begin{pmatrix}a&b\\c&d\end{pmatrix},\quad
+      \det A=ad-bc\ne0
+      \Longrightarrow
+      A^{-1}=\frac1{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}.
+      \]</div>
+      <article class="example">
+        <h3>Ví dụ 3 · Tìm \(A^{-1}\)</h3>
+        <p>Cho \(A=\begin{pmatrix}2&1\\3&2\end{pmatrix}\).</p>
+        <button class="solution-btn" data-target="sol3" aria-expanded="false">Xem lời giải</button>
+        <div class="solution" id="sol3">
+          <p>\(\det A=2\cdot2-1\cdot3=1\ne0\), nên \(A\) khả nghịch.</p>
+          \[
+          \boxed{A^{-1}=\begin{pmatrix}2&-1\\-3&2\end{pmatrix}}.
+          \]
+          <p>Kiểm tra: \(AA^{-1}=I_2\).</p>
+        </div>
+      </article>
+      <div class="grid2">
+        <div class="card"><h3>Ma trận không khả nghịch</h3><p>Nếu \(\det A=0\), không tồn tại \(A^{-1}\).</p></div>
+        <div class="card"><h3>Kiểm tra kết quả</h3><p>Nhân lại \(AA^{-1}\) hoặc \(A^{-1}A\). Kết quả phải là \(I\).</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="gauss-jordan">
+      <div class="section-head"><div class="index">05</div><div><div class="kicker">Dạng toán 4</div><h2>Tìm nghịch đảo bằng Gauss–Jordan</h2><p class="lead">Phù hợp với ma trận cấp 3 trở lên.</p></div></div>
+      <div class="formula">\[
+        (A\mid I)\xrightarrow{\text{biến đổi sơ cấp dòng}}(I\mid A^{-1}).
+      \]</div>
+      <ol class="steps">
+        <li><b>1</b><div>Lập ma trận ghép \((A\mid I)\).</div></li>
+        <li><b>2</b><div>Dùng các phép biến đổi sơ cấp dòng để đưa nửa trái về \(I\).</div></li>
+        <li><b>3</b><div>Khi nửa trái là \(I\), nửa phải chính là \(A^{-1}\).</div></li>
+      </ol>
+      <article class="example">
+        <h3>Ví dụ 4 · Gauss–Jordan cấp 2</h3>
+        <p>Tìm nghịch đảo của \(A=\begin{pmatrix}1&1\\1&2\end{pmatrix}\).</p>
+        <button class="solution-btn" data-target="sol4" aria-expanded="false">Xem lời giải</button>
+        <div class="solution" id="sol4">\[
+        \left(\begin{array}{cc|cc}1&1&1&0\\1&2&0&1\end{array}\right)
+        \xrightarrow{R_2\leftarrow R_2-R_1}
+        \left(\begin{array}{cc|cc}1&1&1&0\\0&1&-1&1\end{array}\right)
+        \xrightarrow{R_1\leftarrow R_1-R_2}
+        \left(\begin{array}{cc|cc}1&0&2&-1\\0&1&-1&1\end{array}\right).
+        \]
+        Do đó \(\boxed{A^{-1}=\begin{pmatrix}2&-1\\-1&1\end{pmatrix}}\).</div>
+      </article>
+    </section>
+
+    <section class="section" id="ung-dung">
+      <div class="section-head"><div class="index">06</div><div><div class="kicker">Dạng toán 5</div><h2>Ứng dụng của ma trận nghịch đảo</h2><p class="lead">Giải phương trình ma trận và hệ phương trình tuyến tính.</p></div></div>
+      <div class="grid2">
+        <article class="card"><h3>Phương trình \(AX=B\)</h3><div class="formula">\(X=A^{-1}B\)</div><p>Nhân bên trái bởi \(A^{-1}\).</p></article>
+        <article class="card"><h3>Phương trình \(XA=B\)</h3><div class="formula blue">\(X=BA^{-1}\)</div><p>Nhân bên phải bởi \(A^{-1}\).</p></article>
+      </div>
+      <article class="example">
+        <h3>Ví dụ 5 · Giải hệ bằng ma trận nghịch đảo</h3>
+        <p>Giải hệ \(\begin{cases}2x+y=5\\3x+2y=8.\end{cases}\)</p>
+        <button class="solution-btn" data-target="sol5" aria-expanded="false">Xem lời giải</button>
+        <div class="solution" id="sol5">
+          \[
+          A=\begin{pmatrix}2&1\\3&2\end{pmatrix},\quad
+          X=\begin{pmatrix}x\\y\end{pmatrix},\quad
+          B=\begin{pmatrix}5\\8\end{pmatrix}.
+          \]
+          Vì \(A^{-1}=\begin{pmatrix}2&-1\\-3&2\end{pmatrix}\), nên
+          \[
+          X=A^{-1}B=
+          \begin{pmatrix}2&-1\\-3&2\end{pmatrix}
+          \begin{pmatrix}5\\8\end{pmatrix}
+          =
+          \begin{pmatrix}2\\1\end{pmatrix}.
+          \]
+          Vậy \(\boxed{x=2,\ y=1}\).
+        </div>
+      </article>
+      <div class="warning"><strong>Thứ tự nhân rất quan trọng:</strong> từ \(AX=B\) suy ra \(X=A^{-1}B\), không phải \(BA^{-1}\).</div>
+    </section>
+
+    <section class="section" id="luyen-tap">
+      <div class="section-head"><div class="index">07</div><div><div class="kicker">Tự kiểm tra</div><h2>Bài tập trắc nghiệm</h2><p class="lead">Chọn đáp án rồi nhấn “Chấm điểm”. Kết quả được lưu trên trình duyệt.</p></div></div>
+      <div class="quiz-toolbar">
+        <div class="filters">
+          <button class="filter active" data-filter="all">Tất cả</button>
+          <button class="filter" data-filter="phep-toan">Phép toán</button>
+          <button class="filter" data-filter="nhan">Nhân ma trận</button>
+          <button class="filter" data-filter="nghich-dao">Nghịch đảo</button>
+          <button class="filter" data-filter="ung-dung">Ứng dụng</button>
+        </div>
+        <strong id="quizStatus">0/10 câu đã chọn</strong>
+      </div>
+      <div class="questions" id="questions"></div>
+      <div class="quiz-actions">
+        <button class="action submit" id="submitQuiz">Chấm điểm</button>
+        <button class="action shuffle" id="shuffleQuiz">Đảo câu hỏi</button>
+        <button class="action reset" id="resetQuiz">Làm lại</button>
+      </div>
+      <div class="result" id="resultPanel">
+        <div class="score" id="scoreText">0/10</div>
+        <h3 id="resultTitle">Kết quả</h3>
+        <p id="resultMessage"></p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <strong>Ma trận và ma trận nghịch đảo</strong>
+      <p>Biên soạn theo hướng nhận dạng dạng toán, quy trình giải và luyện tập tương tác.</p>
+      <p>© Giảng viên Nguyễn Đức Ánh</p>
+    </footer>
+  </main>
+
+  <button class="top" id="backTop" aria-label="Lên đầu trang">↑</button>
+
+  <script>
+  "use strict";
+
+  const STORAGE_KEY = "matrixLessonV1";
+  const quizData = [
+    {topic:"phep-toan",q:"Cho $A=\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}$. Ma trận $2A$ là:",opts:["$\\begin{pmatrix}2&4\\\\6&8\\end{pmatrix}$","$\\begin{pmatrix}1&4\\\\9&16\\end{pmatrix}$","$\\begin{pmatrix}3&4\\\\5&6\\end{pmatrix}$","$\\begin{pmatrix}2&2\\\\6&4\\end{pmatrix}$"],ans:0,exp:"Nhân từng phần tử của $A$ với 2."},
+    {topic:"phep-toan",q:"Điều kiện để cộng hai ma trận là:",opts:["Cùng số hàng","Cùng số cột","Cùng cấp","Đều là ma trận vuông"],ans:2,exp:"Hai ma trận cộng được khi có cùng số hàng và cùng số cột."},
+    {topic:"nhan",q:"Nếu $A$ cấp $2\\times3$ và $B$ cấp $3\\times4$ thì $AB$ có cấp:",opts:["$2\\times4$","$3\\times3$","$4\\times2$","$2\\times3$"],ans:0,exp:"Giữ số hàng của $A$ và số cột của $B$."},
+    {topic:"nhan",q:"Mệnh đề nào đúng trong trường hợp tổng quát?",opts:["$AB=BA$","$AB\\ne BA$","$A^2=A$","$AI=0$"],ans:1,exp:"Phép nhân ma trận nói chung không có tính giao hoán."},
+    {topic:"nghich-dao",q:"Ma trận vuông $A$ khả nghịch khi:",opts:["$\\det A=0$","$\\det A\\ne0$","Tổng các phần tử khác 0","Mọi phần tử khác 0"],ans:1,exp:"Điều kiện cần và đủ là định thức khác 0."},
+    {topic:"nghich-dao",q:"Với $A=\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}$, $\\det A$ bằng:",opts:["$ac-bd$","$ad-bc$","$ab-cd$","$a+d-b-c$"],ans:1,exp:"Định thức cấp 2 là tích đường chéo chính trừ tích đường chéo phụ."},
+    {topic:"nghich-dao",q:"Nghịch đảo của $I_2$ là:",opts:["$0$","$-I_2$","$I_2$","Không tồn tại"],ans:2,exp:"$I_2I_2=I_2$, nên $I_2^{-1}=I_2$."},
+    {topic:"ung-dung",q:"Từ $AX=B$ với $A$ khả nghịch, suy ra:",opts:["$X=BA^{-1}$","$X=A^{-1}B$","$X=AB^{-1}$","$X=B^{-1}A$"],ans:1,exp:"Nhân bên trái hai vế bởi $A^{-1}$."},
+    {topic:"ung-dung",q:"Từ $XA=B$ với $A$ khả nghịch, suy ra:",opts:["$X=BA^{-1}$","$X=A^{-1}B$","$X=AB$","$X=B^{-1}A$"],ans:0,exp:"Nhân bên phải hai vế bởi $A^{-1}$."},
+    {topic:"nhan",q:"Phần tử $c_{ij}$ của $C=AB$ được tính bằng:",opts:["Hàng $i$ của $A$ nhân cột $j$ của $B$","Cột $i$ của $A$ nhân hàng $j$ của $B$","Cộng hai phần tử cùng vị trí","Nhân hai phần tử cùng vị trí"],ans:0,exp:"Quy tắc cốt lõi là hàng nhân cột."}
+  ];
+
+  let order = quizData.map((_,i)=>i);
+  let filter = "all";
+
+  function safeLoad(){
+    try{return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");}
+    catch(e){return {};}
+  }
+  function safeSave(data){
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}catch(e){}
+  }
+  function typeset(){
+    if(window.MathJax && MathJax.typesetPromise){
+      MathJax.typesetClear?.();
+      MathJax.typesetPromise().catch(()=>{});
+    }
+  }
+  function renderQuiz(){
+    const box=document.getElementById("questions");
+    if(!box)return;
+    const saved=safeLoad().answers || {};
+    box.innerHTML="";
+    order.forEach((idx,pos)=>{
+      const item=quizData[idx];
+      if(filter!=="all" && item.topic!==filter)return;
+      const card=document.createElement("article");
+      card.className="question";
+      card.dataset.index=idx;
+      card.innerHTML=`
+        <div class="qtop"><strong>Câu ${pos+1}</strong><span class="topic">${item.topic.replace("-"," ")}</span></div>
+        <p>${item.q}</p>
+        <div class="options">
+          ${item.opts.map((o,j)=>`<label class="option"><input type="radio" name="q${idx}" value="${j}" ${String(saved[idx])===String(j)?"checked":""}><span>${o}</span></label>`).join("")}
+        </div>
+        <div class="feedback" id="fb${idx}"></div>`;
+      box.appendChild(card);
+    });
+    box.querySelectorAll('input[type="radio"]').forEach(input=>{
+      input.addEventListener("change",()=>{
+        const data=safeLoad();data.answers=data.answers||{};
+        data.answers[input.name.slice(1)]=Number(input.value);safeSave(data);updateStatus();
+      });
+    });
+    updateStatus();typeset();
+  }
+  function updateStatus(){
+    const answers=safeLoad().answers||{};
+    const count=Object.keys(answers).length;
+    const el=document.getElementById("quizStatus");
+    if(el)el.textContent=`${count}/${quizData.length} câu đã chọn`;
+  }
+  function gradeQuiz(){
+    const answers=safeLoad().answers||{};
+    let score=0;
+    document.querySelectorAll(".question").forEach(card=>{
+      const idx=Number(card.dataset.index), item=quizData[idx], choice=answers[idx];
+      const fb=card.querySelector(".feedback");
+      card.classList.remove("correct","incorrect");
+      if(choice===item.ans){score++;card.classList.add("correct");}
+      else{card.classList.add("incorrect");}
+      if(fb){
+        fb.classList.add("show");
+        fb.innerHTML=`<strong>${choice===item.ans?"Chính xác.":"Chưa chính xác."}</strong> ${item.exp}`;
+      }
+    });
+    const panel=document.getElementById("resultPanel");
+    const pct=Math.round(score/quizData.length*100);
+    document.getElementById("scoreText").textContent=`${score}/${quizData.length}`;
+    document.getElementById("resultTitle").textContent=pct>=80?"Hoàn thành tốt":pct>=50?"Đã nắm được phần cơ bản":"Cần ôn lại";
+    document.getElementById("resultMessage").textContent=`Bạn đạt ${pct}%. Hãy xem lại lời giải ở những câu chưa đúng.`;
+    panel.classList.add("show");
+    const data=safeLoad();data.lastScore=score;safeSave(data);
+    panel.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+  function resetQuiz(){
+    const data=safeLoad();data.answers={};delete data.lastScore;safeSave(data);
+    document.getElementById("resultPanel").classList.remove("show");renderQuiz();
+  }
+  function shuffleQuiz(){
+    for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+    renderQuiz();
+  }
+
+  document.querySelectorAll(".solution-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const target=document.getElementById(btn.dataset.target);
+      if(!target)return;
+      const open=target.classList.toggle("open");
+      btn.setAttribute("aria-expanded",String(open));
+      btn.textContent=open?"Ẩn lời giải":"Xem lời giải";
+      if(open)typeset();
+    });
+  });
+
+  document.querySelectorAll(".filter").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+      btn.classList.add("active");filter=btn.dataset.filter;renderQuiz();
+    });
+  });
+
+  document.getElementById("submitQuiz")?.addEventListener("click",gradeQuiz);
+  document.getElementById("resetQuiz")?.addEventListener("click",resetQuiz);
+  document.getElementById("shuffleQuiz")?.addEventListener("click",shuffleQuiz);
+
+  document.getElementById("fontBtn")?.addEventListener("click",()=>{
+    document.body.classList.toggle("large-text");
+    const d=safeLoad();d.largeText=document.body.classList.contains("large-text");safeSave(d);
+  });
+  document.getElementById("contrastBtn")?.addEventListener("click",()=>{
+    document.body.classList.toggle("high-contrast");
+    const d=safeLoad();d.highContrast=document.body.classList.contains("high-contrast");safeSave(d);
+  });
+
+  const saved=safeLoad();
+  if(saved.largeText)document.body.classList.add("large-text");
+  if(saved.highContrast)document.body.classList.add("high-contrast");
+
+  function onScroll(){
+    const max=document.documentElement.scrollHeight-innerHeight;
+    const pct=max>0?scrollY/max*100:0;
+    document.getElementById("progressFill").style.width=`${pct}%`;
+    document.getElementById("backTop").classList.toggle("show",scrollY>500);
+    const sections=[...document.querySelectorAll("main section[id]")];
+    let current=sections[0]?.id||"trang-chu";
+    sections.forEach(s=>{if(s.getBoundingClientRect().top<=150)current=s.id;});
+    document.querySelectorAll(".toc-link").forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+current));
+  }
+  addEventListener("scroll",onScroll,{passive:true});
+  document.getElementById("backTop")?.addEventListener("click",()=>scrollTo({top:0,behavior:"smooth"}));
+
+  renderQuiz();onScroll();
+  </script>
+</body>
+</html>
